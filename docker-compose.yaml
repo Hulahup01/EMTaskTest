@@ -1,0 +1,48 @@
+version: '3.5'
+
+services:
+  product_db_postgres:
+    container_name: product_db_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=product
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=root
+    image: postgres:14.10-alpine
+
+  logging_db_postgres:
+    container_name: logging_db_postgres
+    ports:
+      - "2345:2345"
+    environment:
+      - POSTGRES_DB=logging
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=root
+    image: postgres:14.10-alpine
+    command: -p 2345
+
+  user_db_postgres:
+    container_name: user_db_postgres
+    ports:
+      - "5555:5555"
+    environment:
+      - POSTGRES_DB=user
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=root
+    image: postgres:14.10-alpine
+    command: -p 5555
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.13
+    ports:
+      - "5552:5552"
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbitmq_stream advertised_host localhost
+    command: >
+      /bin/bash -c "
+      rabbitmq-plugins enable rabbitmq_stream rabbitmq_stream_management &&
+      rabbitmq-server"
